@@ -1,5 +1,3 @@
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -58,7 +56,7 @@ public class Solution {
 			}
 			
 			//다익스트라 시작
-			while(pq!=null)
+			while(!pq.isEmpty())
 			{
 				int[] cur=pq.poll();
 				int curX=cur[0];
