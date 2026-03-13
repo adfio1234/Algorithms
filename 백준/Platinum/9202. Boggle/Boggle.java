@@ -14,6 +14,7 @@ public class Main {
 		private boolean isEnd;
 		private String data;
 		private int len=0;
+		private int childNum=0;
 		
 		public void insert(String word) {
 			Node cur=this;
@@ -21,7 +22,10 @@ public class Main {
 			for(int i=0;i<word.length();i++) {
 				int letter=word.charAt(i)-'A';
 				
-				if(cur.child[letter]==null)cur.child[letter]=new Node();
+				if(cur.child[letter]==null) {
+					cur.child[letter]=new Node();
+					cur.childNum++;
+				}
 				
 				cur=cur.child[letter];
 				cur.len=cnt++;
@@ -38,7 +42,8 @@ public class Main {
 			if(cur.isEnd) {
 				include.add(cur);
 			}
-			
+			if(cur.len==8)return;
+			if(cur.childNum==0)return;
 			visited[y][x]=true;
 			
 			for(int i=0;i<8;i++) {
