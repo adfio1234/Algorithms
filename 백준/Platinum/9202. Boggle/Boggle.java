@@ -1,9 +1,11 @@
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Main {
@@ -15,7 +17,7 @@ public class Main {
 		private String data;
 		private int len=0;
 		private int childNum=0;
-		
+		private boolean found;
 		public void insert(String word) {
 			Node cur=this;
 			int cnt=1;
@@ -36,11 +38,21 @@ public class Main {
 		
 		public void contains(Node cur,int y,int x) {
 			
-			char c=boggle[y][x];
-			int letter=c-'A';
-			
-			if(cur.isEnd) {
-				include.add(cur);
+			if(cur.isEnd&&!cur.found) {
+				cur.found=true;
+				foundList.add(cur);
+				score+=SCORE[cur.len];
+				count++;
+				
+				if(cur.len>maxLen) {
+					maxLen=cur.len;
+					maxWord=cur.data;
+				}else if(cur.len==maxLen) {
+					if(cur.data.compareTo(maxWord)<0)
+					{
+						maxWord=cur.data;
+					}
+				}
 			}
 			if(cur.len==8)return;
 			if(cur.childNum==0)return;
@@ -75,11 +87,18 @@ public class Main {
 	static char[][] boggle;
 	static StringBuilder sb=new StringBuilder();
 	static boolean[][] visited;
-	
-	static Set<Node> include=new HashSet<>();
+	static int score;
+	static int count;
+	static int maxLen;
+	static String maxWord;
+	static List<Node> foundList;
+	//static Set<Node> include=new HashSet<>();
 	
 	static void maxScore() {
-		
+		score=0;
+		count=0;
+		maxLen=0;
+		maxWord="";
 		for(int i=0;i<BOGGLE_SIZE;i++) {
 			for(int j=0;j<BOGGLE_SIZE;j++) {
 				int idx=boggle[i][j]-'A';
@@ -87,31 +106,32 @@ public class Main {
 				trie.contains(trie.child[idx], i, j);
 			}
 		}
-		longestSentence();
+		for(Node i:foundList)i.found=false;
+		sb.append(score).append(' ').append(maxWord).append(' ').append(count).append('\n');
 		
 	}
 	
-	static void longestSentence() {
-		int cnt=include.size();
-		
-		int total=0;
-		int maxLen=0;
-		String max="";
-		for(Node n:include) {
-			if(n.len>maxLen) {
-				maxLen=n.len;
-				max=n.data;
-			}
-			if(n.len==maxLen) {
-				if(n.data.compareTo(max)<0) {
-					max=n.data;
-				}
-			}
-			total+=SCORE[n.len];
-		}
-		
-		sb.append(total).append(' ').append(max).append(' ').append(cnt).append('\n');
-	}
+//	static void longestSentence() {
+//		int cnt=include.size();
+//		
+//		int total=0;
+//		int maxLen=0;
+//		String max="";
+//		for(Node n:include) {
+//			if(n.len>maxLen) {
+//				maxLen=n.len;
+//				max=n.data;
+//			}
+//			if(n.len==maxLen) {
+//				if(n.data.compareTo(max)<0) {
+//					max=n.data;
+//				}
+//			}
+//			total+=SCORE[n.len];
+//		}
+//		
+//		sb.append(total).append(' ').append(max).append(' ').append(cnt).append('\n');
+//	}
 	
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		// TODO Auto-generated method stub
@@ -131,9 +151,8 @@ public class Main {
 		for(int i=0;i<boardNum;i++) {
 			
 			boggle=new char[BOGGLE_SIZE][BOGGLE_SIZE];
-			include=new HashSet<>();
 			visited=new boolean[BOGGLE_SIZE][BOGGLE_SIZE];
-			
+			foundList=new ArrayList<>();
 			for(int j=0;j<BOGGLE_SIZE;j++)
 			{
 				String input=br.readLine();
