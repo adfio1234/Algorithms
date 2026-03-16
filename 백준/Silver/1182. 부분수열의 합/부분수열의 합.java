@@ -3,50 +3,50 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class Main {
-
-	//arr: 정수로 이루어진 수열
-	//num: num개의 정수
-	//finalSum: 만들어야할합
-	//result: 만들어야할 합을 만들었을때 더한다.
-	static int[] arr;
-	static int num;
-	static int finalSum;
+public class Main{
+	
+	static int[] manaStone;
+	static int[] input;
 	static int result=0;
 	
-	//조합으로 합쳐서 0이되는 값을 더한다.
-	static void permutation(int limit,int cnt,int sum,int idx) {
-		if(limit==cnt) {
-			if(sum==finalSum)result++;
+	//부분집합의 개념을 이용해서 푼다.
+	static void DFS(int idx,int stoneNum,int  curSum,int manaSum) {
+		
+		if(idx==stoneNum) {
+			if(manaSum==curSum)result++;
 			return;
 		}
 		
-		for(int i=idx;i<num;i++) {
-			permutation(limit,cnt+1,sum+arr[i],i+1);
-		}
 		
+		int curMana=manaStone[idx];
+		
+		//선택하는 경우
+		DFS(idx+1,stoneNum,curSum+curMana,manaSum);
+		
+		//선택 안하는 경우
+		DFS(idx+1,stoneNum,curSum,manaSum);
 		
 	}
 	
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
+		//------여기에 솔루션 코드를 작성하세요.------------
 		BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st=new StringTokenizer(br.readLine());
+		StringTokenizer st =new StringTokenizer(br.readLine());
 		
-		num=Integer.parseInt(st.nextToken());
-		finalSum=Integer.parseInt(st.nextToken());
+		int stoneNum=Integer.parseInt(st.nextToken());
+		int manaSum=Integer.parseInt(st.nextToken());
 		
-		arr=new int[num];
-		
+		manaStone=new int[stoneNum];
 		st=new StringTokenizer(br.readLine());
+		for(int i=0;i<stoneNum;i++)manaStone[i]=Integer.parseInt(st.nextToken());
 		
-		int idx=0;
-		while(st.hasMoreTokens())arr[idx++]=Integer.parseInt(st.nextToken());
 		
-		for(int i=1;i<=num;i++) {
-			permutation(i,0,0,0);
-		}
+		
+		DFS(0,stoneNum,0,manaSum);
+		
+		//최소 1개는 고른다했으니까 목표 마나가 0이고 result가 1보다 높을떄
+		//공집합을 처리해주기위해서 result를 1빼준다.
+		if(result>0&&manaSum==0)result--;
 		System.out.println(result);
 	}
-
 }
