@@ -58,9 +58,17 @@ public:
 	int pop()
 	{
 		if (empty())return -1;
-		int res = _head->data;
+		Node* temp = _head;
+
+		int res = temp->data;
+
 		_head = _head->next;
+		delete temp;
 		_size--;
+
+		if (_head == nullptr)
+			_tail = nullptr;
+
 		return res;
 	}
 
